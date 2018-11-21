@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\cBkGround.cpp" />
+    <ClCompile Include="..\src\cGameStuVer.cpp" />
+    <ClCompile Include="..\src\cRocketStuVer.cpp" />
+    <ClCompile Include="..\src\cSDL2WNDManager.cpp" />
+    <ClCompile Include="..\src\cSprite.cpp" />
+    <ClCompile Include="..\src\cTexture.cpp" />
+    <ClCompile Include="..\src\cTextureMgr.cpp" />
+    <ClCompile Include="..\src\RocketsSDL.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\cBkGround.h" />
+    <ClInclude Include="..\src\cGame.h" />
+    <ClInclude Include="..\src\cRocket.h" />
+    <ClInclude Include="..\src\cSDL2WNDManager.h" />
+    <ClInclude Include="..\src\cSprite.h" />
+    <ClInclude Include="..\src\cTexture.h" />
+    <ClInclude Include="..\src\cTextureMgr.h" />
+    <ClInclude Include="..\src\GameConstants.h" />
+    <ClInclude Include="..\src\rocketGame.h" />
+  </ItemGroup>
+</Project>
