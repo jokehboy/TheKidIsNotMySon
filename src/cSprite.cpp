@@ -90,6 +90,9 @@ void cSprite::setTexture(cTexture* theSpriteTexture)  // set the image of the sp
 }
 
 
+
+
+
 void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling)
 {
 	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, theScaling);
@@ -99,6 +102,12 @@ void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rec
 {
 	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, rotAngle, spriteCentre, theScaling);
 }
+
+void cSprite::renderAnimation()
+{
+
+}
+
 /*
 =================
 - Set the sprite dimensions.
@@ -179,3 +188,33 @@ void cSprite::scaleSprite()  // set the sprites current scaling
 	this->spriteCentre.x = this->spritePos_2D.w / 2;
 	this->spriteCentre.y = this->spritePos_2D.h / 2;
 }
+
+void cSprite::animateSprite(int currentFrame, int maxFrame, int frameWidth, int frameHeight)
+{
+	this->spriteDimensions.x = 0;
+	this->spriteDimensions.y = 0;
+	this->spriteDimensions.w = frameWidth;
+	this->spriteDimensions.h = frameHeight;
+	if(currentFrame<maxFrame)
+	{
+		this->spriteDimensions.x = currentFrame * frameWidth;
+		currentFrame++;
+		cout << currentFrame;
+	}
+	
+	if (currentFrame = maxFrame)
+	{
+		currentFrame = 0;
+	}
+}
+
+
+//int curFrame = 0;
+//int maxframe = 7;
+//SDL_Surface *loadedImage;
+//SDL_Surface *image;
+
+//loadedImage = IMG_Load("Images / Michael / MoonwalkSheet.png");
+//
+//SDL_Rect frame;
+//29 58

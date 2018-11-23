@@ -24,6 +24,9 @@ private:
 	// Pointer to Sprite Texture
 	cTexture* spriteTexture;
 
+	int currentFrame;
+	int maxFrame;
+
 	// Texture width & Height
 	int textureWidth;
 	int textureHeight;
@@ -46,5 +49,8 @@ public:
 	FPoint getSpriteScale();  // Return the sprites scaling factor
 	void setSpriteScale(FPoint sScale); // set the sprites scaling factor
 	void scaleSprite(); // update the sprites width & height
+	void animateSprite(int currentFrame,int maxFrame, int frameWidth, int FrameHeight);
+	void renderAnimation();
+
 };
 #endif

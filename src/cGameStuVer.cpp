@@ -4,7 +4,7 @@ cGame.cpp
 ==================================================================================
 */
 #include "cGame.h"
-//add
+
 
 Mix_Music *music = Mix_LoadMUS("Sounds/BiliJen.mp3");
 
@@ -15,67 +15,16 @@ static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 //The movement is based upon framerate, I will code both an average reading of framerate into the game
 //and a fixed framerate (just a made up variable) into my game and see which one works best.
 //quick maffs n that
+//Just realised the window is created with vsync so this was a big waste of time
 #define FRAME_VALUES 10
 
-Uint32 frameTimes[FRAME_VALUES]; // stores frame times
-Uint32 frameTimeLast;
-Uint32 frameCount;
-int finalFps = 0;
-float framesPerSecond;
 
 float spriteDirX = 0.0f;
-int speed = (int)(20 / framesPerSecond);
 
 
 
 
 
-
-void averagefpsInit()
-{
-	memset(frameTimes, 0, sizeof(frameTimes));
-	frameCount = 0;
-	framesPerSecond = 0;
-	frameTimeLast = SDL_GetTicks();
-}
-
-int averageFps(int fps)
-{
-	Uint32 frameTimesI;
-	Uint32 getTicks;
-	Uint32 count;
-
-	frameTimesI = frameCount % FRAME_VALUES;
-
-	getTicks = SDL_GetTicks();
-
-	frameTimes[frameTimesI] = getTicks - frameTimeLast;
-
-	frameTimeLast = getTicks;
-
-	frameCount++;
-
-	if (frameCount < FRAME_VALUES)
-	{
-		count = frameCount;
-	}
-	else
-	{
-		count = FRAME_VALUES;
-	}
-
-	for (UINT i = 0; i < count; i++)
-	{
-		framesPerSecond += frameTimes[i];
-	}
-	framesPerSecond /= count;
-	framesPerSecond = 1000.f / framesPerSecond;
-	
-
-	framesPerSecond = (int)framesPerSecond;
-
-	return framesPerSecond;
-}
 
 
 
@@ -126,6 +75,12 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteSpotlight.setTexture(theTextureMgr->getTexture("Spotlight"));
 	spriteSpotlight.setSpriteDimensions(theTextureMgr->getTexture("Spotlight")->getTWidth(), theTextureMgr->getTexture("Spotlight")->getTHeight());
 
+	theTextureMgr->addTexture("Player", "Images/Michael/MoonwalkSheet.png");
+	playerSprite.setSpritePos({ 0,0 });
+	playerSprite.setTexture(theTextureMgr->getTexture("Player"));
+	
+	
+	
 
 
 	theTextureMgr->addTexture("theRocket", "Images\\Coin.png");
@@ -134,16 +89,23 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theRocket")->getTWidth(), theTextureMgr->getTexture("theRocket")->getTHeight());
 }
 
+
+
+
+
+
+
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
+	
 	bool loop = true;
-	averagefpsInit();
+	
 	if (loop){ playMusic();  }
 
 	while (loop)
 	{
+	
 		
-		averageFps(finalFps);
 		//We get the time that passed since the last frame
 		double elapsedTime = this->getElapsedSeconds();
 
@@ -155,12 +117,21 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 }
 
+
+
+
+
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
 	SDL_RenderClear(theRenderer);
 	spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 	rocketSprite.render(theRenderer, &rocketSprite.getSpriteDimensions(), &rocketSprite.getSpritePos(), rocketSprite.getRocketRotation(), &rocketSprite.getSpriteCentre(), rocketSprite.getSpriteScale());
 	spriteSpotlight.render(theRenderer, NULL, NULL, spriteSpotlight.getSpriteScale());
+	playerSprite.animateSprite(0, 7, 29, 58);
+	playerSprite.render(theRenderer, &playerSprite.getSpriteDimensions() ,NULL,playerSprite.getSpriteScale());
+	
+	
+	
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -212,6 +183,8 @@ void cGame::update(double deltaTime)
 int xVel, yVel;
 
 
+
+
 bool cGame::getInput(bool theLoop)
 {
 	SDL_Rect xPos, yPos = rocketSprite.getSpritePos();
@@ -223,6 +196,11 @@ bool cGame::getInput(bool theLoop)
 	rocketSprite.setRocketVelocity(50);
 	
 	SDL_Event event;
+
+
+	
+	
+
 
 	while (SDL_PollEvent(&event))
 	{
