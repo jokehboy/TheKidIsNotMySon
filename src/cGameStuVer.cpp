@@ -4,7 +4,8 @@ cGame.cpp
 ==================================================================================
 */
 #include "cGame.h"
-
+#include <sstream>
+#include <cstring>
 
 Mix_Music *music = Mix_LoadMUS("Sounds/BiliJen.mp3");
 
@@ -16,15 +17,16 @@ static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 //and a fixed framerate (just a made up variable) into my game and see which one works best.
 //quick maffs n that
 //Just realised the window is created with vsync so this was a big waste of time
-#define FRAME_VALUES 10
+
 
 
 float spriteDirX = 0.0f;
 
 
 
+SDL_Texture *playerTextures[7];
 
-
+ int currentFrame = 0;
 
 
 
@@ -75,13 +77,61 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteSpotlight.setTexture(theTextureMgr->getTexture("Spotlight"));
 	spriteSpotlight.setSpriteDimensions(theTextureMgr->getTexture("Spotlight")->getTWidth(), theTextureMgr->getTexture("Spotlight")->getTHeight());
 
-	theTextureMgr->addTexture("Player", "Images/Michael/MoonwalkSheet.png");
-	playerSprite.setSpritePos({ 0,0 });
-	playerSprite.setTexture(theTextureMgr->getTexture("Player"));
-	
-	
-	
 
+	//Setting player sprite textures.
+	theTextureMgr->addTexture("Player0", "Images/Michael/Moon0.png");
+	playerSprite[0].setSpritePos({ 200,200 });
+	playerSprite[0].setTexture(theTextureMgr->getTexture("Player0"));
+	playerSprite[0].setSpriteDimensions(theTextureMgr->getTexture("Player0")->getTWidth(), theTextureMgr->getTexture("Player0")->getTHeight());
+
+	theTextureMgr->addTexture("Player1", "Images/Michael/Moon1.png");
+	
+	playerSprite[1].setTexture(theTextureMgr->getTexture("Player1"));
+	playerSprite[1].setSpriteDimensions(theTextureMgr->getTexture("Player1")->getTWidth(), theTextureMgr->getTexture("Player1")->getTHeight());
+
+	theTextureMgr->addTexture("Player2", "Images/Michael/Moon2.png");
+
+	playerSprite[2].setTexture(theTextureMgr->getTexture("Player2"));
+	playerSprite[2].setSpriteDimensions(theTextureMgr->getTexture("Player2")->getTWidth(), theTextureMgr->getTexture("Player2")->getTHeight());
+
+	theTextureMgr->addTexture("Player3", "Images/Michael/Moon3.png");
+
+	playerSprite[3].setTexture(theTextureMgr->getTexture("Player3"));
+	playerSprite[3].setSpriteDimensions(theTextureMgr->getTexture("Player3")->getTWidth(), theTextureMgr->getTexture("Player3")->getTHeight());
+
+	theTextureMgr->addTexture("Player4", "Images/Michael/Moon4.png");
+
+	playerSprite[4].setTexture(theTextureMgr->getTexture("Player4"));
+	playerSprite[4].setSpriteDimensions(theTextureMgr->getTexture("Player4")->getTWidth(), theTextureMgr->getTexture("Player4")->getTHeight());
+
+	theTextureMgr->addTexture("Player5", "Images/Michael/Moon5.png");
+
+	playerSprite[5].setTexture(theTextureMgr->getTexture("Player5"));
+	playerSprite[5].setSpriteDimensions(theTextureMgr->getTexture("Player5")->getTWidth(), theTextureMgr->getTexture("Player5")->getTHeight());
+
+	theTextureMgr->addTexture("Player6", "Images/Michael/Moon6.png");
+	
+	playerSprite[6].setTexture(theTextureMgr->getTexture("Player6"));
+	playerSprite[6].setSpriteDimensions(theTextureMgr->getTexture("Player6")->getTWidth(), theTextureMgr->getTexture("Player6")->getTHeight());
+
+	theTextureMgr->addTexture("Player7", "Images/Michael/Moon7.png");
+
+	playerSprite[7].setTexture(theTextureMgr->getTexture("Player7"));
+	playerSprite[7].setSpriteDimensions(theTextureMgr->getTexture("Player7")->getTWidth(), theTextureMgr->getTexture("Player7")->getTHeight());
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
 
 	theTextureMgr->addTexture("theRocket", "Images\\Coin.png");
 	rocketSprite.setSpritePos({ 500, 350 });
@@ -123,14 +173,14 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
+	
+
+
 	SDL_RenderClear(theRenderer);
 	spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 	rocketSprite.render(theRenderer, &rocketSprite.getSpriteDimensions(), &rocketSprite.getSpritePos(), rocketSprite.getRocketRotation(), &rocketSprite.getSpriteCentre(), rocketSprite.getSpriteScale());
 	spriteSpotlight.render(theRenderer, NULL, NULL, spriteSpotlight.getSpriteScale());
-	playerSprite.animateSprite(0, 7, 29, 58);
-	playerSprite.render(theRenderer, &playerSprite.getSpriteDimensions() ,NULL,playerSprite.getSpriteScale());
-	
-	
+	playerSprite[currentFrame].render(theRenderer, &playerSprite[currentFrame].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[currentFrame].getSpriteCentre(), playerSprite[currentFrame].getSpriteScale());
 	
 	SDL_RenderPresent(theRenderer);
 }
@@ -204,6 +254,8 @@ bool cGame::getInput(bool theLoop)
 
 	while (SDL_PollEvent(&event))
 	{
+
+		
 		if (event.type == SDL_QUIT)
 		{
 			theLoop = false;
@@ -225,7 +277,8 @@ bool cGame::getInput(bool theLoop)
 			}
 			if (event.key.keysym.sym == SDLK_d)
 			{
-				xVel += rocketSprite.getRocketVelocity();
+				currentFrame += 1;
+				
 				cout << "d pressed and registered" << endl;
 			}
 			if (event.key.keysym.sym == SDLK_w)

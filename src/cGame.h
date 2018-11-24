@@ -51,7 +51,7 @@ private:
 	cSprite spriteBkgd;
 	cSprite spriteSpotlight;
 	cRocket rocketSprite;
-	cSprite playerSprite;
+	cSprite playerSprite[7];
 	// Game objects
 	
 

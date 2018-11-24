@@ -189,23 +189,10 @@ void cSprite::scaleSprite()  // set the sprites current scaling
 	this->spriteCentre.y = this->spritePos_2D.h / 2;
 }
 
-void cSprite::animateSprite(int currentFrame, int maxFrame, int frameWidth, int frameHeight)
+void cSprite::animateSprite(SDL_Renderer* theRenderer, cSprite animation[])
 {
-	this->spriteDimensions.x = 0;
-	this->spriteDimensions.y = 0;
-	this->spriteDimensions.w = frameWidth;
-	this->spriteDimensions.h = frameHeight;
-	if(currentFrame<maxFrame)
-	{
-		this->spriteDimensions.x = currentFrame * frameWidth;
-		currentFrame++;
-		cout << currentFrame;
-	}
 	
-	if (currentFrame = maxFrame)
-	{
-		currentFrame = 0;
-	}
+
 }
 
 
