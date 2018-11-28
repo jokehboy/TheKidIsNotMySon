@@ -18,15 +18,19 @@ static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 //quick maffs n that
 //Just realised the window is created with vsync so this was a big waste of time
 
+const Uint8 *keystate;
 
+int animRate;
+int animLength;
 
-float spriteDirX = 0.0f;
+bool buttonPressed = false;
+SDL_Texture *playerTextures[];
 
+int frameDrawn;
+int startTime;
+FPoint playerScale;
+SDL_RendererFlip flipType = SDL_FLIP_NONE;
 
-
-SDL_Texture *playerTextures[7];
-
- int currentFrame = 0;
 
 
 
@@ -62,6 +66,11 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255);
 	SDL_RenderPresent(theRenderer);
 
+	startTime = SDL_GetTicks();
+	animRate = 7;
+	animLength = 8;
+	
+
 	this->m_lastTime = high_resolution_clock::now();
 
 	theTextureMgr->setRenderer(theRenderer);
@@ -80,46 +89,57 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	//Setting player sprite textures.
 	theTextureMgr->addTexture("Player0", "Images/Michael/Moon0.png");
-	playerSprite[0].setSpritePos({ 200,200 });
+	playerSprite[0].setSpritePos({ 500,525 });
 	playerSprite[0].setTexture(theTextureMgr->getTexture("Player0"));
 	playerSprite[0].setSpriteDimensions(theTextureMgr->getTexture("Player0")->getTWidth(), theTextureMgr->getTexture("Player0")->getTHeight());
 
 	theTextureMgr->addTexture("Player1", "Images/Michael/Moon1.png");
-	
 	playerSprite[1].setTexture(theTextureMgr->getTexture("Player1"));
 	playerSprite[1].setSpriteDimensions(theTextureMgr->getTexture("Player1")->getTWidth(), theTextureMgr->getTexture("Player1")->getTHeight());
 
 	theTextureMgr->addTexture("Player2", "Images/Michael/Moon2.png");
-
 	playerSprite[2].setTexture(theTextureMgr->getTexture("Player2"));
 	playerSprite[2].setSpriteDimensions(theTextureMgr->getTexture("Player2")->getTWidth(), theTextureMgr->getTexture("Player2")->getTHeight());
 
 	theTextureMgr->addTexture("Player3", "Images/Michael/Moon3.png");
-
 	playerSprite[3].setTexture(theTextureMgr->getTexture("Player3"));
 	playerSprite[3].setSpriteDimensions(theTextureMgr->getTexture("Player3")->getTWidth(), theTextureMgr->getTexture("Player3")->getTHeight());
 
 	theTextureMgr->addTexture("Player4", "Images/Michael/Moon4.png");
-
 	playerSprite[4].setTexture(theTextureMgr->getTexture("Player4"));
 	playerSprite[4].setSpriteDimensions(theTextureMgr->getTexture("Player4")->getTWidth(), theTextureMgr->getTexture("Player4")->getTHeight());
 
 	theTextureMgr->addTexture("Player5", "Images/Michael/Moon5.png");
-
 	playerSprite[5].setTexture(theTextureMgr->getTexture("Player5"));
 	playerSprite[5].setSpriteDimensions(theTextureMgr->getTexture("Player5")->getTWidth(), theTextureMgr->getTexture("Player5")->getTHeight());
 
 	theTextureMgr->addTexture("Player6", "Images/Michael/Moon6.png");
-	
 	playerSprite[6].setTexture(theTextureMgr->getTexture("Player6"));
 	playerSprite[6].setSpriteDimensions(theTextureMgr->getTexture("Player6")->getTWidth(), theTextureMgr->getTexture("Player6")->getTHeight());
 
 	theTextureMgr->addTexture("Player7", "Images/Michael/Moon7.png");
-
 	playerSprite[7].setTexture(theTextureMgr->getTexture("Player7"));
 	playerSprite[7].setSpriteDimensions(theTextureMgr->getTexture("Player7")->getTWidth(), theTextureMgr->getTexture("Player7")->getTHeight());
 
+	theTextureMgr->addTexture("Player8", "Images/Michael/Nod0.png");
+	playerSprite[8].setTexture(theTextureMgr->getTexture("Player8"));
+	playerSprite[8].setSpriteDimensions(theTextureMgr->getTexture("Player8")->getTWidth(), theTextureMgr->getTexture("Player8")->getTHeight());
 
+	theTextureMgr->addTexture("Player9", "Images/Michael/Nod1.png");
+	playerSprite[9].setTexture(theTextureMgr->getTexture("Player9"));
+	playerSprite[9].setSpriteDimensions(theTextureMgr->getTexture("Player9")->getTWidth(), theTextureMgr->getTexture("Player9")->getTHeight());
+
+	theTextureMgr->addTexture("Player10", "Images/Michael/Nod2.png");
+	playerSprite[10].setTexture(theTextureMgr->getTexture("Player10"));
+	playerSprite[10].setSpriteDimensions(theTextureMgr->getTexture("Player10")->getTWidth(), theTextureMgr->getTexture("Player10")->getTHeight());
+
+	theTextureMgr->addTexture("Player11", "Images/Michael/Nod3.png");
+	playerSprite[11].setTexture(theTextureMgr->getTexture("Player11"));
+	playerSprite[11].setSpriteDimensions(theTextureMgr->getTexture("Player11")->getTWidth(), theTextureMgr->getTexture("Player11")->getTHeight());
+
+
+	playerScale.X = 2;
+	playerScale.Y = 2;
 
 
 
@@ -178,10 +198,8 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	SDL_RenderClear(theRenderer);
 	spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
-	rocketSprite.render(theRenderer, &rocketSprite.getSpriteDimensions(), &rocketSprite.getSpritePos(), rocketSprite.getRocketRotation(), &rocketSprite.getSpriteCentre(), rocketSprite.getSpriteScale());
+	playerSprite[frameDrawn].render(theRenderer, &playerSprite[frameDrawn].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[frameDrawn].getSpriteCentre(), playerSprite[frameDrawn].getSpriteScale(), flipType);
 	spriteSpotlight.render(theRenderer, NULL, NULL, spriteSpotlight.getSpriteScale());
-	playerSprite[currentFrame].render(theRenderer, &playerSprite[currentFrame].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[currentFrame].getSpriteCentre(), playerSprite[currentFrame].getSpriteScale());
-	
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -193,12 +211,15 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer, double rotA
 
 void cGame::update()
 {
+	
 
 }
 
 void cGame::playMusic()
 {
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) < 0)
+	
+
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 	{
 		cout << "Mixer init error: " << Mix_GetError() << endl;
 	}
@@ -226,8 +247,22 @@ void cGame::playMusic()
 
 void cGame::update(double deltaTime)
 {
+	if (buttonPressed == false)
+	{
+		
+		frameDrawn = 8;
+		frameDrawn = ((SDL_GetTicks() - startTime) * 2 / 1000) % 4 + 8;
+
+		cout << frameDrawn << " ";
+
+
+		if (frameDrawn > 12 || frameDrawn < 8 ) { frameDrawn = 8; }
+		
+
+	}
 	
 	rocketSprite.update(deltaTime);
+	
 }
 
 int xVel, yVel;
@@ -237,16 +272,18 @@ int xVel, yVel;
 
 bool cGame::getInput(bool theLoop)
 {
-	SDL_Rect xPos, yPos = rocketSprite.getSpritePos();
+	playerScale.X, playerScale.Y = 2;
+	playerSprite->setSpriteScale(playerScale);
+	playerSprite->scaleSprite();
 
 	SDL_Rect newPos = playerSprite->getSpritePos();
-	FPoint currentScale = rocketSprite.getSpriteScale();
-	FPoint newScale;
 	
-	rocketSprite.setRocketVelocity(50);
+	
 	
 	SDL_Event event;
 
+
+	
 	
 	
 	
@@ -254,82 +291,85 @@ bool cGame::getInput(bool theLoop)
 
 	while (SDL_PollEvent(&event))
 	{
-
+		
 		
 		if (event.type == SDL_QUIT)
 		{
 			theLoop = false;
 		}
-		if (event.type == SDL_KEYDOWN )
-		{
-				
-				
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-			{
 
-				theLoop = false;
-			}
+		keystate = SDL_GetKeyboardState(NULL);
+
+		if (keystate[SDL_SCANCODE_D])
+		{
+			
+		
+			flipType = SDL_FLIP_NONE;
+			frameDrawn = ((SDL_GetTicks() - startTime) * animRate / 1000) % animLength;
+
+
+			newPos.x += 3;
+			playerSprite->setSpritePos(newPos);
+			
+			if (frameDrawn >= 7) { frameDrawn = 0; }
+			
+			cout << frameDrawn << endl;
+		
+		}
+		if (keystate[SDL_SCANCODE_A])
+		{
+			
+			
+			
+			flipType = SDL_FLIP_HORIZONTAL;
+			frameDrawn = ((SDL_GetTicks() - startTime) * animRate / 1000) % animLength;
+
+
+			newPos.x -= 3;
+			playerSprite->setSpritePos(newPos);
+			
+			if (frameDrawn >= 7) { frameDrawn = 0; }
+			
+			cout << frameDrawn << endl;
+			
+		}
+
+		
+		if (event.type == SDL_KEYUP)
+		{
 			if (event.key.keysym.sym == SDLK_a)
 			{
-				newPos.x -= 5;
-				rocketSprite.setSpritePos(newPos);
-				cout << "a pressed and registered" << endl;
+				buttonPressed = false;
 			}
+
 			if (event.key.keysym.sym == SDLK_d)
 			{
-				newPos.x += 5;
-				playerSprite->setSpritePos(newPos);
-				currentFrame += 1;
-				if (currentFrame == 7) { currentFrame = 0; }
-				cout << "d pressed and registered" << endl;
+				buttonPressed = false;
 			}
-			if (event.key.keysym.sym == SDLK_w)
-			{
-				newPos.y -= 5;
-				rocketSprite.setSpritePos(newPos);
-				cout << "w pressed and registered" << endl;
-			}
-			if (event.key.keysym.sym == SDLK_s)
-			{
-				newPos.y += 5;
-				rocketSprite.setSpritePos(newPos);
-				cout << "s pressed and registered" << endl;
-			}
-			if (event.key.keysym.sym == SDLK_KP_4)
-			{
-				rocketSprite.setRocketRotation(rocketSprite.getRocketRotation() - 5);
-				cout << "keypad 4 pressed and registered" << endl;
-			}
-			if (event.key.keysym.sym == SDLK_KP_6)
-			{
-				rocketSprite.setRocketRotation(rocketSprite.getRocketRotation() + 5);
-				cout << "keypad 6 pressed and registered" << endl;
-			}
-			if (event.key.keysym.sym == SDLK_KP_8)
-			{
-				newScale.X = currentScale.X + 1;
-				newScale.Y = currentScale.Y + 1;
-				rocketSprite.setSpriteScale(newScale);
-				rocketSprite.scaleSprite();
-
-				cout << "keypad 8 pressed and registered" << endl;
-			}
-			if (event.key.keysym.sym == SDLK_KP_5)
-			{
-				newScale.X = currentScale.X - 1;
-				newScale.Y = currentScale.Y - 1;
-				rocketSprite.setSpriteScale(newScale);
-				rocketSprite.scaleSprite();
-
-
-				cout << "keypad 5 pressed and registered" << endl;
-			}
-			//SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling
 			
-;
-				
 		}
-		
+		if (event.type == SDL_KEYDOWN)
+		{
+
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				theLoop = false;
+			}
+
+			if (event.key.keysym.sym == SDLK_a)
+			{
+				buttonPressed = true;
+			}
+
+			if (event.key.keysym.sym == SDLK_d)
+			{
+				buttonPressed = true;
+			}
+
+		}
+
+	
+
 	}
 
 	 

@@ -104,10 +104,10 @@ void cTexture::renderTexture(SDL_Renderer* theRenderer, SDL_Texture* ptheTexture
 	SDL_RenderCopy(theRenderer, ptheTexture, theSourceRect, theDestRect);
 }
 
-void cTexture::renderTexture(SDL_Renderer* theRenderer, SDL_Texture* ptheTexture, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling)
+void cTexture::renderTexture(SDL_Renderer* theRenderer, SDL_Texture* ptheTexture, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling, SDL_RendererFlip flip)
 {
 	//SDL_RenderSetScale(theRenderer, theScaling.X, theScaling.Y);
-	SDL_RenderCopyEx(theRenderer, ptheTexture, theSourceRect, theDestRect, rotAngle, spriteCentre, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(theRenderer, ptheTexture, theSourceRect, theDestRect, rotAngle, spriteCentre, flip);
 }
 
 

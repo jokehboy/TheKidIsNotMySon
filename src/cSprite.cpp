@@ -98,15 +98,12 @@ void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rec
 	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, theScaling);
 }
 
-void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling)
+void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling,SDL_RendererFlip flip)
 {
-	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, rotAngle, spriteCentre, theScaling);
+	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, rotAngle, spriteCentre, theScaling, flip);
 }
 
-void cSprite::renderAnimation()
-{
 
-}
 
 /*
 =================
@@ -189,11 +186,7 @@ void cSprite::scaleSprite()  // set the sprites current scaling
 	this->spriteCentre.y = this->spritePos_2D.h / 2;
 }
 
-void cSprite::animateSprite(SDL_Renderer* theRenderer, cSprite animation[])
-{
-	
 
-}
 
 
 //int curFrame = 0;

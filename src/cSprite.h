@@ -37,7 +37,7 @@ public:
 	cSprite(cTexture* theSpriteTexture);			// Default constructor
 	~cSprite();			// Destructor
 	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling);
-	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling);
+	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling, SDL_RendererFlip flip);
 	SDL_Rect getSpritePos();  // Return the sprites current position
 	void setSpritePos(SDL_Rect sPosition); // set the position of the sprite
 	cTexture* getTexture();  // Return the sprites current image
@@ -49,8 +49,7 @@ public:
 	FPoint getSpriteScale();  // Return the sprites scaling factor
 	void setSpriteScale(FPoint sScale); // set the sprites scaling factor
 	void scaleSprite(); // update the sprites width & height
-	void animateSprite(SDL_Renderer* theRenderer, cSprite *animation);
-	void renderAnimation();
+	
 
 };
 #endif
