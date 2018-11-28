@@ -239,7 +239,7 @@ bool cGame::getInput(bool theLoop)
 {
 	SDL_Rect xPos, yPos = rocketSprite.getSpritePos();
 
-	SDL_Rect newPos = rocketSprite.getSpritePos();
+	SDL_Rect newPos = playerSprite->getSpritePos();
 	FPoint currentScale = rocketSprite.getSpriteScale();
 	FPoint newScale;
 	
@@ -247,7 +247,7 @@ bool cGame::getInput(bool theLoop)
 	
 	SDL_Event event;
 
-
+	
 	
 	
 
@@ -277,8 +277,10 @@ bool cGame::getInput(bool theLoop)
 			}
 			if (event.key.keysym.sym == SDLK_d)
 			{
+				newPos.x += 5;
+				playerSprite->setSpritePos(newPos);
 				currentFrame += 1;
-				
+				if (currentFrame == 7) { currentFrame = 0; }
 				cout << "d pressed and registered" << endl;
 			}
 			if (event.key.keysym.sym == SDLK_w)
