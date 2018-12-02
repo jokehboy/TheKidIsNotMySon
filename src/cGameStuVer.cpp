@@ -33,6 +33,7 @@ SDL_RendererFlip flipType = SDL_FLIP_NONE;
 
 
 
+int playerPosX;
 
 
 
@@ -261,6 +262,7 @@ void cGame::update(double deltaTime)
 
 	}
 	
+	
 	rocketSprite.update(deltaTime);
 	
 }
@@ -287,12 +289,8 @@ bool cGame::getInput(bool theLoop)
 	
 	
 	
-
-
 	while (SDL_PollEvent(&event))
 	{
-		
-		
 		if (event.type == SDL_QUIT)
 		{
 			theLoop = false;
@@ -303,11 +301,10 @@ bool cGame::getInput(bool theLoop)
 		if (keystate[SDL_SCANCODE_D])
 		{
 			
-		
 			flipType = SDL_FLIP_NONE;
 			frameDrawn = ((SDL_GetTicks() - startTime) * animRate / 1000) % animLength;
 
-
+			playerPosX += 3;
 			newPos.x += 3;
 			playerSprite->setSpritePos(newPos);
 			
@@ -316,15 +313,15 @@ bool cGame::getInput(bool theLoop)
 			cout << frameDrawn << endl;
 		
 		}
+
+
 		if (keystate[SDL_SCANCODE_A])
 		{
-			
-			
 			
 			flipType = SDL_FLIP_HORIZONTAL;
 			frameDrawn = ((SDL_GetTicks() - startTime) * animRate / 1000) % animLength;
 
-
+			playerPosX -= 3;
 			newPos.x -= 3;
 			playerSprite->setSpritePos(newPos);
 			
@@ -348,6 +345,8 @@ bool cGame::getInput(bool theLoop)
 			}
 			
 		}
+
+
 		if (event.type == SDL_KEYDOWN)
 		{
 
@@ -369,6 +368,15 @@ bool cGame::getInput(bool theLoop)
 		}
 
 	
+		if ((newPos.x > 1024))
+		{
+			newPos.x = -22;
+		}
+		if ((newPos.x < -23))
+		{
+			newPos.x = 1023;
+		}
+
 
 	}
 

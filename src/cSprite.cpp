@@ -188,7 +188,6 @@ void cSprite::scaleSprite()  // set the sprites current scaling
 
 
 
-
 //int curFrame = 0;
 //int maxframe = 7;
 //SDL_Surface *loadedImage;

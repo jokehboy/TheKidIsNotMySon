@@ -50,6 +50,7 @@ public:
 	void setSpriteScale(FPoint sScale); // set the sprites scaling factor
 	void scaleSprite(); // update the sprites width & height
 	
+	
 
 };
 #endif
