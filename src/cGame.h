@@ -7,8 +7,10 @@ cGame.h
 ==================================================================================
 */
 
+
 #include <SDL.h>
 #include<SDL_mixer.h>
+
 
 // Game specific includes
 #include "rocketGame.h"
@@ -31,6 +33,7 @@ public:
 	bool getInput(bool theLoop);
 	void move(Uint32 deltaTime);
 	double getElapsedSeconds();
+
 	
 
 	void playMusic();
@@ -52,7 +55,26 @@ private:
 	cSprite spriteSpotlight;
 	cRocket rocketSprite;
 	cSprite playerSprite[100];
-	// Game objects
+	
+	vector<LPCSTR> textureName;
+	vector<LPCSTR> textName;
+	vector<LPCSTR> texturesToUse;
+	cTexture* tempTexture;
+	SDL_Rect tempRect;
+
+	vector<LPCSTR> btnNameList;
+	vector<LPCSTR> btnTexturesToUse;
+	vector<SDL_Point> btnPos;
+	btnTypes theBtnType;
+
+	vector<LPCSTR> soundList;
+	vector<LPCSTR> soundToUse;
+	vector<soundType> soundTypes;
+
+	SDL_Point areaClicked;
+	gameState theGameState;
+
+	
 	
 
 };

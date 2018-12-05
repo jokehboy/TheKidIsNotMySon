@@ -20,6 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cBkGround.cpp" />
+    <ClCompile Include="..\src\cButton.cpp" />
+    <ClCompile Include="..\src\cButtonMgr.cpp" />
+    <ClCompile Include="..\src\cFont.cpp" />
+    <ClCompile Include="..\src\cFontMgr.cpp" />
     <ClCompile Include="..\src\cGameStuVer.cpp" />
     <ClCompile Include="..\src\cRocketStuVer.cpp" />
     <ClCompile Include="..\src\cSDL2WNDManager.cpp" />
@@ -30,6 +34,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cBkGround.h" />
+    <ClInclude Include="..\src\cButton.h" />
+    <ClInclude Include="..\src\cButtonMgr.h" />
+    <ClInclude Include="..\src\cFont.h" />
+    <ClInclude Include="..\src\cFontMgr.h" />
     <ClInclude Include="..\src\cGame.h" />
     <ClInclude Include="..\src\cRocket.h" />
     <ClInclude Include="..\src\cSDL2WNDManager.h" />

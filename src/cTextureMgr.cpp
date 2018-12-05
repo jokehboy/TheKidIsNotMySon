@@ -45,7 +45,7 @@ cTextureMgr::cTextureMgr(SDL_Renderer* theRenderer)
 */
 cTextureMgr::~cTextureMgr()
 {
-	
+	deleteTextures();
 }
 
 void cTextureMgr::addTexture(LPCSTR txtName, LPCSTR theFilename)
@@ -58,12 +58,26 @@ void cTextureMgr::addTexture(LPCSTR txtName, LPCSTR theFilename)
 	}
 }
 
+void cTextureMgr::addTexture(LPCSTR txtName, SDL_Texture* theTexture)
+{
+	if (!getTexture(txtName))
+	{
+		cTexture * newTxt = new cTexture();
+		newTxt->loadTexture(theTexture);
+		textureList.insert(make_pair(txtName, newTxt));
+	}
+}
 void cTextureMgr::deleteTextures()
 {
 	for (map<LPCSTR, cTexture*>::iterator txt = textureList.begin(); txt != textureList.end(); ++txt)
 	{
 		delete txt->second;
 	}
+}
+void cTextureMgr::deleteTexture(LPCSTR txtName)
+{
+	map<LPCSTR, cTexture*>::iterator txt = textureList.find(txtName);
+	this->textureList.erase(txt);
 }
 /*
 =================

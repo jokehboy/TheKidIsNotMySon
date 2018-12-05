@@ -15,10 +15,18 @@ static cSDL2WNDManager* pgmWNDMgr = cSDL2WNDManager::getInstance();
 //This is the our Game
 static cGame* theGame = cGame::getInstance();
 
+
+
+
+
+
+
 int main(int argc, char *argv[])
 {
 	if (!pgmWNDMgr->initWND(WINDOW_TITLE, 1024, 768))
 		return -1;
+
+	
 
 	theGame->initialise(pgmWNDMgr->getSDLWindow(), pgmWNDMgr->getSDLRenderer());
 

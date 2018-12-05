@@ -6,9 +6,13 @@
     <ClCompile Include="..\src\cRocketStuVer.cpp" />
     <ClCompile Include="..\src\cSDL2WNDManager.cpp" />
     <ClCompile Include="..\src\cSprite.cpp" />
+    <ClCompile Include="..\src\RocketsSDL.cpp" />
+    <ClCompile Include="..\src\cButton.cpp" />
+    <ClCompile Include="..\src\cButtonMgr.cpp" />
+    <ClCompile Include="..\src\cFont.cpp" />
+    <ClCompile Include="..\src\cFontMgr.cpp" />
     <ClCompile Include="..\src\cTexture.cpp" />
     <ClCompile Include="..\src\cTextureMgr.cpp" />
-    <ClCompile Include="..\src\RocketsSDL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cBkGround.h" />
@@ -16,9 +20,13 @@
     <ClInclude Include="..\src\cRocket.h" />
     <ClInclude Include="..\src\cSDL2WNDManager.h" />
     <ClInclude Include="..\src\cSprite.h" />
-    <ClInclude Include="..\src\cTexture.h" />
-    <ClInclude Include="..\src\cTextureMgr.h" />
     <ClInclude Include="..\src\GameConstants.h" />
     <ClInclude Include="..\src\rocketGame.h" />
+    <ClInclude Include="..\src\cButton.h" />
+    <ClInclude Include="..\src\cButtonMgr.h" />
+    <ClInclude Include="..\src\cFont.h" />
+    <ClInclude Include="..\src\cFontMgr.h" />
+    <ClInclude Include="..\src\cTexture.h" />
+    <ClInclude Include="..\src\cTextureMgr.h" />
   </ItemGroup>
 </Project>

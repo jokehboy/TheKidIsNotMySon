@@ -23,8 +23,10 @@ public:
 	cTextureMgr(SDL_Renderer* theRenderer);
 	~cTextureMgr();
 	void addTexture(LPCSTR txtName, LPCSTR theFilename);		// add the texture for use.
+	void addTexture(LPCSTR txtName, SDL_Texture* theTexture);		// add the texture for use.
 	cTexture* getTexture(LPCSTR textureName);		// return the texture.
 	void setRenderer(SDL_Renderer* ptheRenderer); // Set the renderer
 	void deleteTextures();						// Delete all textures;
+	void deleteTexture(LPCSTR txtName);						// Delete all textures;
 };
 #endif
