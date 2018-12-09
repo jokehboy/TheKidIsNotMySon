@@ -62,9 +62,16 @@ private:
 	cTexture* tempTexture;
 	SDL_Rect tempRect;
 
+	vector<LPCSTR> fontList;
+	vector<LPCSTR> fontToUse;
+
+	vector<LPCSTR> gameText;
+	vector<LPCSTR> gameTextContent;
+	vector<LPCSTR> highScoreTextures;
+
 	vector<LPCSTR> btnNameList;
 	vector<LPCSTR> btnTexturesToUse;
-	vector<SDL_Point> btnPos;
+	vector<SDL_Rect> btnPos;
 	btnTypes theBtnType;
 
 	vector<LPCSTR> soundList;
@@ -74,8 +81,19 @@ private:
 	SDL_Point areaClicked;
 	gameState theGameState;
 
+	SDL_Rect pos;
+	FPoint scale;
+
+	string strScore;
+	int rosesCollected;
 	
-	
+	cHighScoreTable theHSTable;
+	int numTableItems;
+	string theHighScoreTable;
+	int theHSTableSize;
+
+	bool gameOver;
+
 
 };
 

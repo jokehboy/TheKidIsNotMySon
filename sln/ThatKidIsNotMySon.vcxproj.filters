@@ -13,6 +13,7 @@
     <ClCompile Include="..\src\cFontMgr.cpp" />
     <ClCompile Include="..\src\cTexture.cpp" />
     <ClCompile Include="..\src\cTextureMgr.cpp" />
+    <ClCompile Include="..\src\cHighScoreTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cBkGround.h" />
@@ -28,5 +29,6 @@
     <ClInclude Include="..\src\cFontMgr.h" />
     <ClInclude Include="..\src\cTexture.h" />
     <ClInclude Include="..\src\cTextureMgr.h" />
+    <ClInclude Include="..\src\cHighScoreTable.h" />
   </ItemGroup>
 </Project>

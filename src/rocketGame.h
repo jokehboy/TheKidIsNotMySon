@@ -8,5 +8,6 @@
 #include "cRocket.h"
 #include "cTextureMgr.h"
 #include "cTexture.h"
+#include "cHighScoreTable.h"
 
 #endif
