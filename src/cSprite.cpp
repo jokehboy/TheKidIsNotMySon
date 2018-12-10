@@ -19,6 +19,13 @@ cSprite::cSprite() 			// Default constructor
 	this->spriteTexture = NULL;
 	this->spriteCentre = {0, 0};
 	this->spriteScale = { 1, 1 };
+	this->spriteRotationAngle = 0;
+	this->boundingRect = { 0, 0, 0, 0 };
+	this->mActive = true;
+	this->mNoFrames = 0;
+	this->mCurrentFrame = 0;
+	this->mRate = 0.0f;
+
 }
 
 cSprite::cSprite(cTexture* theSpriteTexture) 			// Default constructor
@@ -28,6 +35,12 @@ cSprite::cSprite(cTexture* theSpriteTexture) 			// Default constructor
 	this->spritePos_2D = { 0, 0, this->spriteTexture->getTWidth(), this->spriteTexture->getTHeight() };
 	this->spriteCentre = { this->spritePos_2D.w / 2, this->spritePos_2D.h / 2};
 	this->spriteScale = { 1, 1 };
+	this->spriteRotationAngle = 0;
+	this->boundingRect = { 0, 0, 0, 0 };
+	this->mActive = true;
+	this->mNoFrames = 0;
+	this->mCurrentFrame = 0;
+	this->mRate = 1.0f / 4.0f;
 }
 
 /*
@@ -55,12 +68,10 @@ SDL_Rect cSprite::getSpritePos()  // Return the sprites current position
 =================
 */
 
-void cSprite::setSpritePos(SDL_Rect sPosition)  // set the position of the sprite
+void cSprite::setSpritePos(SDL_Point sPosition)  // set the position of the sprite
 {
 	this->spritePos_2D.x = sPosition.x;
 	this->spritePos_2D.y = sPosition.y;
-	this->spritePos_2D.w = sPosition.w;
-	this->spritePos_2D.h = sPosition.h;
 }
 
 /*
@@ -90,21 +101,15 @@ void cSprite::setTexture(cTexture* theSpriteTexture)  // set the image of the sp
 }
 
 
-
-
-
 void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling)
 {
 	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, theScaling);
 }
 
-void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling,SDL_RendererFlip flip)
+void cSprite::render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling, SDL_RendererFlip flip )
 {
-	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, rotAngle, spriteCentre, theScaling, flip);
+	this->spriteTexture->renderTexture(theRenderer, this->spriteTexture->getTexture(), theSourceRect, theDestRect, rotAngle, spriteCentre, theScaling,flip);
 }
-
-
-
 /*
 =================
 - Set the sprite dimensions.
@@ -115,6 +120,7 @@ void cSprite::setSpriteDimensions(int texWidth, int textHeight)
 	this->textureWidth = texWidth;
 	this->textureHeight = textHeight;
 	this->spriteDimensions = { 0, 0, texWidth, textHeight };
+	this->spritePos_2D = { this->spritePos_2D.x, this->spritePos_2D.y, texWidth, textHeight };
 }
 
 /*
@@ -167,8 +173,8 @@ FPoint cSprite::getSpriteScale()  // Return the sprites current scaling
 
 void cSprite::setSpriteScale(FPoint sScale)  // set the sprites current scaling
 {
-	this->spriteScale.X = sScale.X;
-	this->spriteScale.Y = sScale.Y;
+	this->spriteScale.X += sScale.X;
+	this->spriteScale.Y += sScale.Y;
 }
 /*
 =================
@@ -182,18 +188,175 @@ void cSprite::scaleSprite()  // set the sprites current scaling
 	this->spritePos_2D.w = (int)(this->spriteDimensions.w * this->spriteScale.X);
 	this->spritePos_2D.h = (int)(this->spriteDimensions.h * this->spriteScale.Y);
 	// Scale Sprite Centre for rotation.
-	this->spriteCentre.x = this->spritePos_2D.w / 2;
-	this->spriteCentre.y = this->spritePos_2D.h / 2;
+	this->spriteCentre.x = (int)(this->spritePos_2D.w / 2);
+	this->spriteCentre.y = (int)(this->spritePos_2D.h / 2);
+}
+/*
+=================
+- Return the sprite rotation Angle.
+=================
+*/
+
+float cSprite::getSpriteRotAngle()  // Return the sprites current scaling
+{
+	return this->spriteRotationAngle;
 }
 
+/*
+=================
+- set the the sprite scale.
+=================
+*/
 
+void cSprite::setSpriteRotAngle(float angle)  // set the sprites current scaling
+{
+	this->spriteRotationAngle = angle;
+}
+/*
+=================
+- Determine the bounding rectangle for the sprite.
+=================
+*/
 
-//int curFrame = 0;
-//int maxframe = 7;
-//SDL_Surface *loadedImage;
-//SDL_Surface *image;
+void cSprite::setBoundingRect(SDL_Rect pRect)
+{
+	SDL_Point sPos = { this->getSpritePos().x, this->getSpritePos().y };
+	this->boundingRect = { sPos.x, sPos.y, this->getSpritePos().w, this->getSpritePos().h }; //(pRect, sPos.x - m_Radius, sPos.y - m_Radius, (textureWidth / 2 + sPos.x), (textureHeight / 2 + sPos.y));
 
-//loadedImage = IMG_Load("Images / Michael / MoonwalkSheet.png");
-//
-//SDL_Rect frame;
-//29 58
+}
+/*
+=================
+- Return the bounding rectangle for the sprite.
+=================
+*/
+SDL_Rect cSprite::getBoundingRect()		// Return the bounding rectangle for the sprite
+{
+	return cSprite::boundingRect;
+}
+/*
+=================================================================
+Sets the translation for the sprite
+=================================================================
+*/
+void cSprite::setSpriteTranslation(SDL_Point spriteTrans)
+{
+	this->spriteTranslation = spriteTrans;
+}
+/*
+=================================================================
+Gets the sprite translation
+=================================================================
+*/
+SDL_Point cSprite::getSpriteTranslation()
+{
+	return this->spriteTranslation;
+}
+/*
+=================
+- Set the sprite to active.
+=================
+*/
+void cSprite::setActive(bool sActive) 			// Set the sprite to active.
+{
+	mActive = sActive;
+}
+/*
+=================
+- Determine if the sprite is active.
+=================
+*/
+bool cSprite::isActive() 						// Determine if the sprite is active.
+{
+	return mActive;
+}
+/*
+=================
+- Check for collisions.
+=================
+*/
+
+bool cSprite::collidedWith(SDL_Rect* thisSpriteRect, SDL_Rect* otherSpriteRect)
+{
+	// perform the intersection test
+	if (SDL_HasIntersection(thisSpriteRect, otherSpriteRect))
+		return true;
+	else
+		return false;
+}
+
+bool cSprite::SphereSphereCollision(SDL_Point spritePosition, float spriteRadius)
+{
+	SDL_Point theSpriteLen;
+	theSpriteLen.x = this->getSpritePos().x - spritePosition.x;
+	theSpriteLen.y = this->getSpritePos().y - spritePosition.y;
+	const float distSq = lengthSQRD(theSpriteLen);
+
+	const float sumRadius = (this->getSpriteCentre().x + spriteRadius);
+
+	if (distSq < sumRadius * sumRadius)
+	{
+		return true; // Collision
+	}
+	return false; // No Collision
+}
+
+float cSprite::lengthSQRD(SDL_Point theLength)
+{
+	return (float)(theLength.x * theLength.x) + (theLength.y * theLength.y);
+}
+
+void cSprite::animate(double deltaTime)
+{
+	if ((SDL_GetTicks() / 100) % this->getNoFrames())
+	{
+		int frameWidth = this->getSpriteDimensions().w;
+		this->spritePos_2D.w = frameWidth;
+		this->setSourceRect( { mCurrentFrame * frameWidth, 0, frameWidth, this->getSpriteDimensions().h });
+		if (this->getCurrentFrame() >= this->getNoFrames())
+		{
+			this->setCurrentFrame(0);
+			this->setActive(false);
+		}
+		this->mCurrentFrame++;
+	}
+}
+
+void cSprite::setNoFrames(int numFrames)
+{
+	this->mNoFrames = numFrames;
+}
+
+int cSprite::getNoFrames()
+{
+	return this->mNoFrames;
+}
+
+void cSprite::setCurrentFrame(int currentFrame)
+{
+	this->mCurrentFrame = currentFrame;
+}
+
+int cSprite::getCurrentFrame()
+{
+	return this->mCurrentFrame;
+}
+
+void cSprite::setSourceRect(SDL_Rect sourceRect)
+{
+	this->mSourceRect = sourceRect;
+}
+
+SDL_Rect cSprite::getSourceRect()
+{
+	return this->mSourceRect;
+}
+
+void cSprite::setRate(float theRate)
+{
+	this->mRate = theRate;
+}
+
+float cSprite::getRate()
+{
+	return this->mRate;
+}

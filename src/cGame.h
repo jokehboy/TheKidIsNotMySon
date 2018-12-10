@@ -53,7 +53,7 @@ private:
 	// Sprites for displaying background and rocket textures
 	cSprite spriteBkgd;
 	cSprite spriteSpotlight;
-	cRocket rocketSprite;
+
 	cSprite playerSprite[100];
 	
 	vector<LPCSTR> textureName;
@@ -71,7 +71,8 @@ private:
 
 	vector<LPCSTR> btnNameList;
 	vector<LPCSTR> btnTexturesToUse;
-	vector<SDL_Rect> btnPos;
+	vector<SDL_Point> btnPos;
+	vector <cButton> theButtons;
 	btnTypes theBtnType;
 
 	vector<LPCSTR> soundList;
@@ -92,7 +93,12 @@ private:
 	string theHighScoreTable;
 	int theHSTableSize;
 
+	int renderWidth, renderHeight;
+
+	SDL_Point mouseClicked;
+
 	bool gameOver;
+	bool loop;
 
 
 };

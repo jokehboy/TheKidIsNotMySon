@@ -3,11 +3,18 @@
 
 // Card game headers
 #include "GameConstants.h"
-#include "cSprite.h"
-#include "cBkGround.h"
-#include "cRocket.h"
-#include "cTextureMgr.h"
 #include "cTexture.h"
+#include "cTextureMgr.h"
+#include "cFont.h"
+#include "cFontMgr.h"
+
+#include "cButtonMgr.h"
+#include "cButton.h"
+#include "cSprite.h"
+
+#include "cButton.h"
+
 #include "cHighScoreTable.h"
+
 
 #endif

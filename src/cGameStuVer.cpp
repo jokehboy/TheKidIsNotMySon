@@ -34,7 +34,7 @@ int animRate;//Animation rate and lenght are used to set the speed of frame chan
 int animLength;
 int frameDrawn;//Frame drawn is the current frame of animation, this is used to move between frames.
 int startTime;
-SDL_Rect newPos; //Used to keep track of player position and move the player.
+SDL_Point newPos; //Used to keep track of player position and move the player.
 FPoint playerScale;//Used to scale the player sprites.
 SDL_RendererFlip flipType = SDL_FLIP_NONE; //Used to flip the sprite on direction change.
 
@@ -78,12 +78,14 @@ cGame* cGame::getInstance()
 void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
 	// Clear the buffer with a black background
+	SDL_GetRendererOutputSize(theRenderer, &renderWidth, &renderHeight);
 	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255);
 	SDL_RenderPresent(theRenderer);
 	this->m_lastTime = high_resolution_clock::now();
 	theTextureMgr->setRenderer(theRenderer);
 	
 
+	mouseClicked = { 0,0 };
 
 	//Setting up the walking animation rate and lenght (Later I just use numbers as all the player animations are in one array).
 	startTime = SDL_GetTicks();
@@ -103,17 +105,18 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	for (unsigned int i = 0; i < fontList.size(); i++)
 	{
-		theFontMgr->addFont(fontList[i], fontToUse[i] , 48);
+		if(i == 0){ theFontMgr->addFont(fontList[i], fontToUse[i], 48); }
+		if(i==1){ theFontMgr->addFont(fontList[i], fontToUse[i], 24); }
 	}
 
 	gameText = { "Title" , "Avoid" , "Collect" , "Movement" , "Score" , "EndScreen" , "HighScore" };
-	gameTextContent = { "That Kid is not my son " , "Avoid babies: Those kids aren't your son!" , "Collect roses from your fans!" , "Use the A and D keys to move" , "Score: " , "But she claims that she is the one... ", "High score: " };
+	gameTextContent = { "That Kid is Not My Son" , "Avoid babies: Those kids aren't your son!" , "Collect roses from your fans!" , "Use the A and D keys to move" , "Score: " , "But she claims that she is the one... ", "High score: " };
 
-	for (unsigned i = 0; i < fontList.size(); i++)
+	for (unsigned int  i = 0; i < gameText.size(); i++)
 	{
 		if (i == 0 || i == 4 || i == 6)
 		{
-			theTextureMgr->addTexture(gameText[i], theFontMgr->getFont("Harlow")->createTextTexture(theRenderer, gameTextContent[i], textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+			theTextureMgr->addTexture(gameText[i], theFontMgr->getFont("Harlow")->createTextTexture(theRenderer, gameTextContent[i], textType::solid, { 242,82,173,255 }, { 0, 0, 0, 0 }));
 		}
 		else
 		{
@@ -125,8 +128,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 
 	btnNameList = { "Start", "Exit" , "Replay" };
-	btnTexturesToUse = { "Images/Play.png", "Images/Quit.png" , "Images/Rerry.png" };
-	btnPos = { {300,350} , {300,450} , {300,525} };
+	btnTexturesToUse = { "Images/Play.png", "Images/Quit.png" , "Images/Retry.png" };
+	btnPos = { {100,50} , {100,90} , {30,40} };
 
 	for (unsigned int i = 0; i < btnNameList.size(); i++)
 	{
@@ -134,22 +137,19 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	}
 	for (unsigned int i = 0; i < btnNameList.size(); i++)
 	{
-		cButton* newBtn = new cButton();
-		newBtn->setTexture(theTextureMgr->getTexture(btnNameList.at(i)));
+		cButton * newBtn = new cButton();
+		newBtn->setTexture(theTextureMgr->getTexture(btnNameList[i]));
 		newBtn->setSpritePos(btnPos[i]);
 		newBtn->setSpriteDimensions(theTextureMgr->getTexture(btnNameList[i])->getTWidth(), theTextureMgr->getTexture(btnNameList[i])->getTHeight());
 		theButtonMgr->add(btnNameList[i], newBtn);
 	}
 	
 	theGameState = gameState::menu;
-	theBtnType = btnTypes::exit;
+	
 
 	//Populate the vectors provided with names and file locations.
 	textureName = { "Player0","Player1","Player2","Player3","Player4","Player5","Player6","Player7","Player8","Player9","Player10","Player11", "theBackground" , "Spotlight" };
 	texturesToUse = {"Images/Michael/Moon0.png","Images/Michael/Moon1.png","Images/Michael/Moon2.png","Images/Michael/Moon3.png","Images/Michael/Moon4.png","Images/Michael/Moon5.png","Images/Michael/Moon6.png","Images/Michael/Moon7.png","Images/Michael/Nod0.png","Images/Michael/Nod1.png","Images/Michael/Nod2.png","Images/Michael/Nod3.png", "Images/Backdrop.png" , "Images/Spotlight.png" };
-	
-	
-	
 	//Add useable textures and apply a name to them using the image locations provided.
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{
@@ -167,7 +167,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	playerSprite[0].setSpritePos({ 500,525 });
 
 	//Scale all the sprites
-	playerScale.X, playerScale.Y = 2;
+	playerScale.X, playerScale.Y = 1;
 	playerSprite->setSpriteScale(playerScale);
 	playerSprite->scaleSprite();
 
@@ -183,9 +183,10 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	rosesCollected = 0;
 	strScore = gameTextContent[4];
 	strScore += to_string(rosesCollected).c_str();
+	
 
-	theTextureMgr->deleteTexture("Score");
-
+	
+	numTableItems = 0;
 	theHSTable.loadFromFile("Data/HighScore.dat");
 
 	theHighScoreTable = gameTextContent[6];
@@ -230,7 +231,7 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
 
 	
-	bool loop = true;
+	 loop = true;
 
 	
 
@@ -267,30 +268,105 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 	case gameState::menu:
 	{
+		
+
+
 		spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 
+		playerSprite[frameDrawn].render(theRenderer, &playerSprite[frameDrawn].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[frameDrawn].getSpriteCentre(), playerSprite[frameDrawn].getSpriteScale(), flipType);
+
+
+		theButtonMgr->getBtn("Start")->setSpritePos({ 350,200 });
+		theButtonMgr->getBtn("Start")->render(theRenderer, &theButtonMgr->getBtn("Start")->getSpriteDimensions(), &theButtonMgr->getBtn("Start")->getSpritePos(), theButtonMgr->getBtn("Start")->getSpriteScale());
+		theButtonMgr->getBtn("Exit")->setSpritePos({ 350,300 });
+		theButtonMgr->getBtn("Exit")->render(theRenderer, &theButtonMgr->getBtn("Exit")->getSpriteDimensions(), &theButtonMgr->getBtn("Exit")->getSpritePos(), theButtonMgr->getBtn("Exit")->getSpriteScale());
+
+
 		tempTexture = theTextureMgr->getTexture("Title");
-		pos = { 500 , 100 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		pos = { 300 , 100 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
 		scale = { 1,1 };
 		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
 
+		tempTexture = theTextureMgr->getTexture("Collect");
+		pos = { 30,500, tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+
+		tempTexture = theTextureMgr->getTexture("Avoid");
+		pos = { 570 , 500 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+
+		tempTexture = theTextureMgr->getTexture("Movement");
+		pos = { 300 , 700 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+
+		
+	}
+	break;
+	case gameState::playing:
+	{
+		spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
+		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
+		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+
+		playerSprite[frameDrawn].render(theRenderer, &playerSprite[frameDrawn].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[frameDrawn].getSpriteCentre(), playerSprite[frameDrawn].getSpriteScale(), flipType);
+
+		spriteSpotlight.setTexture(theTextureMgr->getTexture("Spotlight"));
+		spriteSpotlight.setSpriteDimensions(theTextureMgr->getTexture("Spotlight")->getTWidth(), theTextureMgr->getTexture("Spotlight")->getTHeight());
+		spriteSpotlight.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+
+		theTextureMgr->addTexture("Score", theFontMgr->getFont("Walkway")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+		tempTexture = theTextureMgr->getTexture("Score");
+		pos = { 60, 10 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+		
+		theButtonMgr->getBtn("Exit")->setSpritePos({ 700,650 });
+		theButtonMgr->getBtn("Exit")->render(theRenderer, &theButtonMgr->getBtn("Exit")->getSpriteDimensions(), &theButtonMgr->getBtn("Exit")->getSpritePos(), theButtonMgr->getBtn("Exit")->getSpriteScale());
+
+	}
+	break;
+
+	case gameState::highscore:
+	{
+		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+
+		tempTexture = theTextureMgr->getTexture("HighScore");
+		pos = { 500,100 ,tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		scale = { 1,1 };
+		tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+		pos = { 500 , 200 , tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+
+		for (int i = 0; i < theHSTableSize; i++)
+		{
+			tempTexture = theTextureMgr->getTexture(highScoreTextures[i]);
+			tempTexture->renderTexture(theRenderer, tempTexture->getTexture(), &tempTexture->getTextureRect(), &pos, scale);
+			pos = { 500 , 200 + (50 * i), tempTexture->getTextureRect().w , tempTexture->getTextureRect().h };
+		}
+
+		theButtonMgr->getBtn("Replay")->setSpritePos({ 0, 0 });
+		theButtonMgr->getBtn("Replay")->render(theRenderer, &theButtonMgr->getBtn("Replay")->getSpriteDimensions(), &theButtonMgr->getBtn("Replay")->getSpritePos(), theButtonMgr->getBtn("Replay")->getSpriteScale());
+
+		theButtonMgr->getBtn("Exit")->setSpritePos({ 0, 0 });
+		theButtonMgr->getBtn("Exit")->render(theRenderer, &theButtonMgr->getBtn("Exit")->getSpriteDimensions(), &theButtonMgr->getBtn("Exit")->getSpritePos(), theButtonMgr->getBtn("Exit")->getSpriteScale());
+
+	}
+
+	break;
+	case gameState::end:
+	{
+		loop = false;
+	}
+	break;
+	default:
+	{
+		break;
 
 	}
 
 
 	}
-
-
-
-
-
-
-
 	
-	playerSprite[frameDrawn].render(theRenderer, &playerSprite[frameDrawn].getSpriteDimensions(), &playerSprite->getSpritePos(), NULL, &playerSprite[frameDrawn].getSpriteCentre(), playerSprite[frameDrawn].getSpriteScale(), flipType);
-	spriteSpotlight.render(theRenderer, NULL, NULL, spriteSpotlight.getSpriteScale());
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -300,12 +376,75 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer, double rotA
 	SDL_RenderPresent(theRenderer);
 }
 
-void cGame::update()
+void cGame::update(double deltaTime)
 {
-	
+	if (buttonPressed == false)
+	{
+
+		frameDrawn = 8;
+		frameDrawn = ((SDL_GetTicks() - startTime) * 2 / 1000) % 4 + 8;
+
+		cout << frameDrawn << " ";
+
+
+		if (frameDrawn > 12 || frameDrawn < 8) { frameDrawn = 8; }
+
+
+	}
+
+	if (theGameState == gameState::playing)
+	{
+		newPos = { playerSprite->getSpritePos().x , playerSprite->getSpritePos().y };
+	}
+
+
+	if (theGameState == gameState::menu || theGameState == gameState::end )
+	{
+		theGameState = theButtonMgr->getBtn("Exit")->update(theGameState, gameState::quit, mouseClicked);
+	}
+	else
+	{
+		theGameState = theButtonMgr->getBtn("Exit")->update(theGameState, gameState::end, mouseClicked);
+	}
+
+
+	if (theGameState == gameState::highscore)
+	{
+		theGameState = theButtonMgr->getBtn("Exit")->update(theGameState, gameState::quit, mouseClicked);
+		theGameState = theButtonMgr->getBtn("Replay")->update(theGameState, gameState::menu, mouseClicked);
+	}
+
+
+	if (theGameState == gameState::menu)
+	{
+		theGameState = theButtonMgr->getBtn("Start")->update(theGameState, gameState::playing, mouseClicked);
+		gameOver = false;
+		if (theGameState == gameState::playing && gameOver == false)
+		{
+			theGameState = theButtonMgr->getBtn("Start")->update(theGameState, gameState::playing, mouseClicked);
+			rosesCollected = 0;
+
+		}
+
+	}
+
+	if (theGameState == gameState::playing)
+	{
+
+
+		if(gameOver)
+		{
+			theGameState = gameState::end;
+		}
+	}
+
 
 }
 
+void cGame::update()
+{
+
+}
 
 /*
 	Play music checks to see if the sound will play before allowing it to play
@@ -343,51 +482,17 @@ void cGame::playMusic()
 }
 
 
-/*
-	This was tough to find since I'm used to using normal update :p
-	When the bool buttonPressed is false then i sets the current frameDrawn to the fitst frame of the idle animation and it
+/*	When the bool buttonPressed is false then i sets the current frameDrawn to the fitst frame of the idle animation and it
 	loops through it until one of the movement keys are pressed and then the bool is true.
 */
-
-void cGame::update(double deltaTime)
-{
-	if (buttonPressed == false)
-	{
-		
-		frameDrawn = 8;
-		frameDrawn = ((SDL_GetTicks() - startTime) * 2 / 1000) % 4 + 8;
-
-		cout << frameDrawn << " ";
-
-
-		if (frameDrawn > 12 || frameDrawn < 8 ) { frameDrawn = 8; }
-		
-
-	}
-	
-	
-	rocketSprite.update(deltaTime);
-	
-}
-
-
-
-
-
-
 bool cGame::getInput(bool theLoop)
 {
-	
-	
+		
 	//Set newPos as current position
-	newPos = playerSprite->getSpritePos();
 	
+	
+	SDL_Event event;
 
-
-	
-	
-	
-	
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
@@ -404,7 +509,7 @@ bool cGame::getInput(bool theLoop)
 
 		keystate = SDL_GetKeyboardState(NULL);
 
-		if (keystate[SDL_SCANCODE_D])
+		if (keystate[SDL_SCANCODE_D] && theGameState == gameState::playing)
 		{
 			
 			flipType = SDL_FLIP_NONE;
@@ -420,7 +525,7 @@ bool cGame::getInput(bool theLoop)
 		}
 
 
-		if (keystate[SDL_SCANCODE_A])
+		if (keystate[SDL_SCANCODE_A] && theGameState == gameState::playing)
 		{
 			
 			flipType = SDL_FLIP_HORIZONTAL;
@@ -437,7 +542,7 @@ bool cGame::getInput(bool theLoop)
 
 		//If the key is released then the idle animation plays
 		
-		if (event.type == SDL_KEYUP)
+		if (event.type == SDL_KEYUP && theGameState == gameState::playing)
 		{
 			if (event.key.keysym.sym == SDLK_a)
 			{
@@ -451,9 +556,18 @@ bool cGame::getInput(bool theLoop)
 			
 		}
 
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			if (SDL_BUTTON_LEFT)
+			{
+				mouseClicked = { event.motion.x , event.motion.y };
+
+			}
+		}
+
 
 		//When the key is pressed the walking animation plays and the idle stops.
-		if (event.type == SDL_KEYDOWN)
+		if (event.type == SDL_KEYDOWN && theGameState == gameState::playing)
 		{
 
 			if (event.key.keysym.sym == SDLK_ESCAPE)
@@ -517,6 +631,8 @@ void cGame::cleanUp(SDL_Window* theSDLWND)
 
 	// Destroy the window
 	SDL_DestroyWindow(theSDLWND);
+
+	TTF_Quit();
 
 	// Quit IMG system
 	IMG_Quit();
