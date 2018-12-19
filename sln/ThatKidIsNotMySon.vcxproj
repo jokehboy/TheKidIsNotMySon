@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\cAsteroid.cpp" />
     <ClCompile Include="..\src\cBkGround.cpp" />
     <ClCompile Include="..\src\cButton.cpp" />
     <ClCompile Include="..\src\cButtonMgr.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="..\src\RocketsSDL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\cAsteroid.h" />
     <ClInclude Include="..\src\cBkGround.h" />
     <ClInclude Include="..\src\cButton.h" />
     <ClInclude Include="..\src\cButtonMgr.h" />
@@ -41,7 +43,6 @@
     <ClInclude Include="..\src\cFontMgr.h" />
     <ClInclude Include="..\src\cGame.h" />
     <ClInclude Include="..\src\cHighScoreTable.h" />
-    <ClInclude Include="..\src\cRocket.h" />
     <ClInclude Include="..\src\cSDL2WNDManager.h" />
     <ClInclude Include="..\src\cSprite.h" />
     <ClInclude Include="..\src\cTexture.h" />
@@ -53,7 +54,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7A6F9D47-0B40-4FFD-9EA7-CE16B4A52C30}</ProjectGuid>
     <RootNamespace>ThatKidIsNotMySon</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -152,6 +153,7 @@ xcopy /Y "..\src\Sounds\*.*" "$(OutDir)Sounds\"</Command>
       <AdditionalLibraryDirectories>..\src\SDL2\SDL2-2.0.4\lib\x86;..\src\SDL2\SDL2_image-2.0.1\lib\x86;..\src\SDL2\SDL2_mixer-2.0.1\lib\x86;..\src\SDL2\SDL2_ttf-2.0.14\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "..\src\Images\*.*" "$(OutDir)Images\"

@@ -14,11 +14,11 @@
     <ClCompile Include="..\src\cTextureMgr.cpp" />
     <ClCompile Include="..\src\cHighScoreTable.cpp" />
     <ClCompile Include="..\src\cSprite.cpp" />
+    <ClCompile Include="..\src\cAsteroid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cBkGround.h" />
     <ClInclude Include="..\src\cGame.h" />
-    <ClInclude Include="..\src\cRocket.h" />
     <ClInclude Include="..\src\cSDL2WNDManager.h" />
     <ClInclude Include="..\src\GameConstants.h" />
     <ClInclude Include="..\src\rocketGame.h" />
@@ -30,5 +30,6 @@
     <ClInclude Include="..\src\cTextureMgr.h" />
     <ClInclude Include="..\src\cHighScoreTable.h" />
     <ClInclude Include="..\src\cSprite.h" />
+    <ClInclude Include="..\src\cAsteroid.h" />
   </ItemGroup>
 </Project>

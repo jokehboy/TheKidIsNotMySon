@@ -7,13 +7,10 @@
 #include "cTextureMgr.h"
 #include "cFont.h"
 #include "cFontMgr.h"
-
+#include "cAsteroid.h"
 #include "cButtonMgr.h"
 #include "cButton.h"
 #include "cSprite.h"
-
-#include "cButton.h"
-
 #include "cHighScoreTable.h"
 
 

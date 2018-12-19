@@ -10,8 +10,7 @@ cGame.h
 
 #include <SDL.h>
 #include<SDL_mixer.h>
-
-
+#include <random>
 // Game specific includes
 #include "rocketGame.h"
 
@@ -33,6 +32,7 @@ public:
 	bool getInput(bool theLoop);
 	void move(Uint32 deltaTime);
 	double getElapsedSeconds();
+	
 
 	
 
@@ -53,6 +53,14 @@ private:
 	// Sprites for displaying background and rocket textures
 	cSprite spriteBkgd;
 	cSprite spriteSpotlight;
+
+	cFall Baby;
+	cFall Rose;
+
+	vector<cFall*> theBabies;
+	vector<cFall*> theRoses;
+	int rosesSpawned;
+	int enemiesSpawned;
 
 	cSprite playerSprite[100];
 	
@@ -88,6 +96,9 @@ private:
 	string strScore;
 	int rosesCollected;
 	
+	int xDir;
+	int yDir;
+
 	cHighScoreTable theHSTable;
 	int numTableItems;
 	string theHighScoreTable;
